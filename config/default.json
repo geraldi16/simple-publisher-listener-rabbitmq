@@ -1,0 +1,18 @@
+{
+  "rabbitmq": {
+    "protocol": "amqp",
+    "hostname": "localhost",
+    "port": 5672,
+    "username": "guest",
+    "password": "guest",
+    "queue_config": {
+      "hello-world": {
+        "vhost": "/personal-rabbit-project",
+        "exchange": "hello-world",
+        "exchangeType": "topic",
+        "queue": "hello-world",
+        "routingKey": "#"
+      }
+    }
+  }
+}
