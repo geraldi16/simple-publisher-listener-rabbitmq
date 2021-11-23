@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { Config } from '../Config';
-import { RabbitMQPublisher } from './RabbitMQPublisher';
+import { MessageHandler } from '../MessageHandler';
+import { RabbitMQListener } from './RabbitMQListener';
 
 @Injectable()
-export class RabbitMQPublisherProvider {
+export class RabbitMQListenerProvider {
   constructor(
     private readonly config: Config,
   ) {}
-  public get(configName: string): RabbitMQPublisher {
+  public get(configName: string, messageHandler: MessageHandler): RabbitMQListener {
     const { protocol, hostname, port, username, password, queue_config } = this.config.get(
       'rabbitmq',
     );
@@ -20,11 +21,12 @@ export class RabbitMQPublisherProvider {
       routingKey,
       maxPriority,
       addDeadLetter,
+      prefetch,
     } = queue_config[configName];
     const hostURI = `${protocol}://${username}:${password}@${hostname}:${port}/${encodeURIComponent(
       vhost,
     )}`;
-    const publisher = new RabbitMQPublisher(
+    const listener = new RabbitMQListener(
       hostURI,
       exchange,
       exchangeType,
@@ -33,7 +35,9 @@ export class RabbitMQPublisherProvider {
       maxPriority,
       `Publisher :${configName}`,
       addDeadLetter,
+      prefetch,
+      messageHandler,
     );
-    return publisher;
+    return listener;
   }
 }
