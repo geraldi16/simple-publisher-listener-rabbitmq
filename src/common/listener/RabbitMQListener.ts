@@ -5,8 +5,9 @@ import amqpConnectionManager, {
 import { ConfirmChannel, ConsumeMessage } from 'amqplib';
 
 import { MessageHandler } from '../MessageHandler';
+import { RabbitMQConnection } from '../base/RabbitMQConnection';
 
-export class RabbitMQListener {
+export class RabbitMQListener extends RabbitMQConnection {
   protected connection: AmqpConnectionManager;
   protected channel: ChannelWrapper;
   protected channelSetup: boolean = false;
@@ -25,6 +26,7 @@ export class RabbitMQListener {
     protected readonly prefetch: number,
     protected readonly messageHandler: MessageHandler,
   ) {
+    super(connectionURI, exchangeName, exchangeType, queueName, routingKey, queueMaxPriority, connectionName, addDeadLetter);
     this._init();
   }
 
@@ -39,18 +41,7 @@ export class RabbitMQListener {
     }
   }
 
-  private _init() {
-    try {
-      this.connection = amqpConnectionManager.connect([this.connectionURI]);
-      this.channel = this.connection.createChannel({
-        setup: this._setupChannel.bind(this),
-      });
-    } catch (error) {
-      console.log(`error _init: ${error.message}`)
-    }
-  }
-
-  private async _setupChannel(channel: ConfirmChannel) {
+  protected async _setupChannel(channel: ConfirmChannel) {
     await channel.assertExchange(this.exchangeName, this.exchangeType);
     await channel.assertQueue(this.queueName, {
       durable: true,
