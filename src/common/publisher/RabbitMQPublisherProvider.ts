@@ -5,22 +5,12 @@ import { RabbitMQPublisher } from './RabbitMQPublisher';
 
 @Injectable()
 export class RabbitMQPublisherProvider {
-  constructor(
-    private readonly config: Config,
-  ) {}
+  constructor(private readonly config: Config) {}
   public get(configName: string): RabbitMQPublisher {
-    const { protocol, hostname, port, username, password, queue_config } = this.config.get(
-      'rabbitmq',
-    );
-    const {
-      vhost,
-      exchange,
-      exchangeType,
-      queue,
-      routingKey,
-      maxPriority,
-      addDeadLetter,
-    } = queue_config[configName];
+    const { protocol, hostname, port, username, password, queue_config } =
+      this.config.get('rabbitmq');
+    const { vhost, exchange, exchangeType, queue, routingKey, maxPriority, addDeadLetter } =
+      queue_config[configName];
     const hostURI = `${protocol}://${username}:${password}@${hostname}:${port}/${encodeURIComponent(
       vhost,
     )}`;

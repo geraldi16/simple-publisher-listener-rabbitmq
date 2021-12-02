@@ -10,9 +10,9 @@ import { RabbitMQConnection } from '../base/RabbitMQConnection';
 export class RabbitMQListener extends RabbitMQConnection {
   protected connection: AmqpConnectionManager;
   protected channel: ChannelWrapper;
-  protected channelSetup: boolean = false;
+  protected channelSetup = false;
   protected rabbitMQChannel: ConfirmChannel;
-  protected initialized: boolean = false;
+  protected initialized = false;
 
   constructor(
     protected readonly connectionURI: string,
@@ -26,7 +26,16 @@ export class RabbitMQListener extends RabbitMQConnection {
     protected readonly prefetch: number,
     protected readonly messageHandler: MessageHandler,
   ) {
-    super(connectionURI, exchangeName, exchangeType, queueName, routingKey, queueMaxPriority, connectionName, addDeadLetter);
+    super(
+      connectionURI,
+      exchangeName,
+      exchangeType,
+      queueName,
+      routingKey,
+      queueMaxPriority,
+      connectionName,
+      addDeadLetter,
+    );
     this._init();
   }
 

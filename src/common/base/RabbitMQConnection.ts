@@ -9,9 +9,9 @@ import { MessageHandler } from '../MessageHandler';
 export abstract class RabbitMQConnection {
   protected connection: AmqpConnectionManager;
   protected channel: ChannelWrapper;
-  protected channelSetup: boolean = false;
+  protected channelSetup = false;
   protected rabbitMQChannel: ConfirmChannel;
-  protected initialized: boolean = false;
+  protected initialized = false;
 
   constructor(
     protected readonly connectionURI: string,
@@ -31,7 +31,7 @@ export abstract class RabbitMQConnection {
         setup: this._setupChannel.bind(this),
       });
     } catch (error) {
-      console.log(`error _init: ${error.message}`)
+      console.log(`error _init: ${error.message}`);
     }
   }
 

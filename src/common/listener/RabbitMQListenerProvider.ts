@@ -6,13 +6,10 @@ import { RabbitMQListener } from './RabbitMQListener';
 
 @Injectable()
 export class RabbitMQListenerProvider {
-  constructor(
-    private readonly config: Config,
-  ) {}
+  constructor(private readonly config: Config) {}
   public get(configName: string, messageHandler: MessageHandler): RabbitMQListener {
-    const { protocol, hostname, port, username, password, queue_config } = this.config.get(
-      'rabbitmq',
-    );
+    const { protocol, hostname, port, username, password, queue_config } =
+      this.config.get('rabbitmq');
     const {
       vhost,
       exchange,

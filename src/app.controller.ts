@@ -14,6 +14,6 @@ export class AppController {
   @Get('/publish')
   async publishHello(@Res() response: Response) {
     await this.appService.publishHello();
-    response.send('ok')
+    response.send('ok');
   }
 }

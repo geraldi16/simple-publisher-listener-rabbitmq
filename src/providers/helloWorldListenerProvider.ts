@@ -6,7 +6,10 @@ import { HelloWorldListenerHandler } from '../handlers/HelloWorldListenerHandler
 export const helloWorldListenerProvider: Provider = {
   provide: 'hello-world-listener-provider',
   inject: [RabbitMQListenerProvider, HelloWorldListenerHandler],
-  async useFactory(rabbitMqListenerProvider: RabbitMQListenerProvider, helloWorldHandler: HelloWorldListenerHandler) {
+  async useFactory(
+    rabbitMqListenerProvider: RabbitMQListenerProvider,
+    helloWorldHandler: HelloWorldListenerHandler,
+  ) {
     return rabbitMqListenerProvider.get('hello-world', helloWorldHandler);
   },
 };

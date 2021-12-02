@@ -8,9 +8,9 @@ import { RabbitMQConnection } from '../base/RabbitMQConnection';
 export class RabbitMQPublisher extends RabbitMQConnection {
   protected connection: AmqpConnectionManager;
   protected channel: ChannelWrapper;
-  protected channelSetup: boolean = false;
+  protected channelSetup = false;
   protected rabbitMQChannel: ConfirmChannel;
-  protected initialized: boolean = false;
+  protected initialized = false;
 
   constructor(
     protected readonly connectionURI: string,
@@ -22,19 +22,26 @@ export class RabbitMQPublisher extends RabbitMQConnection {
     protected readonly connectionName: string,
     protected readonly addDeadLetter: boolean = true,
   ) {
-    super(connectionURI, exchangeName, exchangeType, queueName, routingKey, queueMaxPriority, connectionName, addDeadLetter);
+    super(
+      connectionURI,
+      exchangeName,
+      exchangeType,
+      queueName,
+      routingKey,
+      queueMaxPriority,
+      connectionName,
+      addDeadLetter,
+    );
   }
 
   async publish(message: string) {
     if (!this.connection) this._init();
 
     try {
-      await this.channel.publish(this.exchangeName, '#', Buffer.from(message))
-      console.log(
-        `Message: ${message} Sent to Exchange: ${this.exchangeName} with routing key: #`,
-      );
+      await this.channel.publish(this.exchangeName, '#', Buffer.from(message));
+      console.log(`Message: ${message} Sent to Exchange: ${this.exchangeName} with routing key: #`);
     } catch (error) {
-      console.log(`error: ${error.message}`)
+      console.log(`error: ${error.message}`);
     }
   }
 

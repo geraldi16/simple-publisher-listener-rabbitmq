@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as config from 'config';
 
 export interface ConfigInterface {
-  get<T extends any>(key: string, defaultValue?: T): T;
+  get<T>(key: string, defaultValue?: T): T;
 }
 
 @Injectable()

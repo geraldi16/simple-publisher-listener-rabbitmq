@@ -3,7 +3,7 @@ import { MessageHandler } from '../common/MessageHandler';
 
 @Injectable()
 export class HelloWorldListenerHandler implements MessageHandler {
-  constructor () {}
+  constructor() {}
 
   async handleMessage(messageString: string) {
     console.log(messageString);
