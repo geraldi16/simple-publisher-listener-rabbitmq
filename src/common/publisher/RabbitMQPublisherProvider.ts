@@ -9,7 +9,6 @@ export class RabbitMQPublisherProvider {
   public get(configName: string): RabbitMQPublisher {
     const { protocol, hostname, port, username, password, queue_config } =
       this.config.get('rabbitmq');
-    console.log('hostname', hostname);
     const { vhost, exchange, exchangeType, queue, routingKey, maxPriority, addDeadLetter } =
       queue_config[configName];
     const hostURI = `${protocol}://${username}:${password}@${hostname}:${port}/${encodeURIComponent(
