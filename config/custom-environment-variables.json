@@ -1,0 +1,5 @@
+{
+  "rabbitmq": {
+    "hostname": "DOCKER_RABBITMQ_HOSTNAME"
+  }
+}

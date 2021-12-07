@@ -1,0 +1,16 @@
+version: "3"  # optional since v1.27.0
+services:
+  simple-publisher:
+    build: .
+    ports:
+      - "1616:1616"
+    command: npm run start
+    environment:
+      - DOCKER_RABBITMQ_HOSTNAME=host.docker.internal
+  simple-listener:
+    build: .
+    ports:
+      - "1617:1617"
+    command: npm run start-hello-listener:dev
+    environment:
+      - DOCKER_RABBITMQ_HOSTNAME=host.docker.internal
