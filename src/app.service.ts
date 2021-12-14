@@ -12,7 +12,7 @@ export class AppService {
   }
 
   async publishHello(): Promise<string> {
-    await this.helloworldPublisher.publish('hello world');
+    await this.helloworldPublisher.publish(JSON.stringify({ message: 'hello world' }));
     return 'successfully sent to messager';
   }
 }

@@ -1,17 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { Config } from '../common/Config';
 import { MessageHandler } from '../common/MessageHandler';
 
 @Injectable()
-export class HelloWorldListenerHandler implements MessageHandler {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {}
+export class HelloWorldListenerHandler extends MessageHandler {
+  constructor(config: Config) {
+    super();
 
-  async handleMessage(messageString: string) {
-    console.log(messageString);
+    const { protocol, hostname, port, username, password, queue_config } = config.get('rabbitmq');
+    const retryExchangeConfig = queue_config['retry-events'];
+    const helloWorldQueueConfig = queue_config['hello-world'];
+    const retryConfig = {
+      connectionURI: `${protocol}://${username}:${password}@${hostname}:${port}/${encodeURIComponent(
+        retryExchangeConfig.vhost,
+      )}`,
+      exchangeName: retryExchangeConfig.exchange,
+      exchangeType: retryExchangeConfig.exchangeType,
+      queueName: helloWorldQueueConfig.queue,
+      routingKey: helloWorldQueueConfig.routingKey,
+    };
+    this.retryExchangePublisher = this._getRetryPublisher(retryConfig);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleError(error: any, message: any): boolean | Promise<boolean> {
-    return true;
+  async handleMessage(messageString: string) {
+    // throw new Error('error hello world');
+    console.log(JSON.parse(messageString).message);
   }
 }

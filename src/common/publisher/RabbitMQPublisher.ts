@@ -11,6 +11,8 @@ export class RabbitMQPublisher extends RabbitMQConnection {
   protected channelSetup = false;
   protected rabbitMQChannel: ConfirmChannel;
   protected initialized = false;
+  private dlxExchangeName: string;
+  private dlxExchangeType: string;
 
   constructor(
     protected readonly connectionURI: string,
@@ -45,6 +47,17 @@ export class RabbitMQPublisher extends RabbitMQConnection {
     }
   }
 
+  async republish(message: string) {
+    if (!this.connection) this._republishInit();
+
+    try {
+      await this.channel.publish(this.exchangeName, '#.retry', Buffer.from(message));
+      console.log(`Message: ${message} Sent to Exchange: ${this.exchangeName} with routing key: #`);
+    } catch (error) {
+      console.log(`error: ${error.message}`);
+    }
+  }
+
   protected async _setupChannel(channel: ConfirmChannel) {
     await channel.assertExchange(this.exchangeName, this.exchangeType);
     await channel.assertQueue(this.queueName, {
@@ -54,5 +67,39 @@ export class RabbitMQPublisher extends RabbitMQConnection {
       `Binding Queue ${this.queueName} to Exchange: ${this.exchangeName} with Routing Key: #`,
     );
     return channel.bindQueue(this.queueName, this.exchangeName, '#');
+  }
+
+  private async _republishInit() {
+    try {
+      this.connection = amqpConnectionManager.connect([this.connectionURI]);
+      this.channel = this.connection.createChannel({
+        setup: this._setupRetryChannel.bind(this),
+      });
+    } catch (error) {
+      console.log(`error _repulishInit: ${error.message}`);
+    }
+  }
+
+  private async _setupRetryChannel(channel: ConfirmChannel) {
+    // assert retry exchange
+    await channel.assertExchange(this.exchangeName, this.exchangeType);
+    // assert and bind target queue with retry exchange DLX
+    this.dlxExchangeName = `${this.exchangeName}-DLX`;
+    this.dlxExchangeType = 'topic';
+    await channel.assertExchange(this.dlxExchangeName, this.dlxExchangeType);
+    const routingKey = `${this.routingKey}.#`;
+    await channel.bindQueue(this.queueName, this.dlxExchangeName, routingKey);
+
+    // assert retrying queue and move to retry dlx after 5s
+    const waitQueueName = `retry-5s`;
+    const timeDelay = 5000;
+    const routingKeyRetry = `#.retry`;
+    await channel.assertQueue(waitQueueName, {
+      arguments: {
+        'x-dead-letter-exchange': this.dlxExchangeName,
+        'x-message-ttl': timeDelay,
+      },
+    });
+    await channel.bindQueue(waitQueueName, this.exchangeName, routingKeyRetry);
   }
 }

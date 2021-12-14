@@ -12,6 +12,11 @@
         "exchangeType": "topic",
         "queue": "hello-world",
         "routingKey": "#"
+      },
+      "retry-events": {
+        "vhost": "/personal-rabbit-project",
+        "exchange": "retry_exchange",
+        "exchangeType": "topic"
       }
     }
   }

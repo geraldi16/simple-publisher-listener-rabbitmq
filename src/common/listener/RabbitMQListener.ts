@@ -46,7 +46,8 @@ export class RabbitMQListener extends RabbitMQConnection {
       await this.messageHandler.handleMessage(messageString);
       this.channel.ack(message);
     } catch (error) {
-      await this.messageHandler.handleError(error, message);
+      const reject = await this.messageHandler.handleError(error, message);
+      this.channel.nack(message, false, !reject);
     }
   }
 
