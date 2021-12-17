@@ -19,11 +19,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "start-hello-listener:dev": "nodemon ./src/hello.listener.ts"
+    "start-hello-listener:dev": "nodemon ./src/hello.listener.ts",
+    "start-simple-hello-listener:dev": "nodemon ./src/simple.hello.listener.ts"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
+    "@nestjs/microservices": "^8.2.3",
     "@nestjs/platform-express": "^8.0.0",
     "amqp-connection-manager": "^3.7.0",
     "amqplib": "^0.8.0",

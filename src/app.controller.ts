@@ -16,4 +16,10 @@ export class AppController {
     await this.appService.publishHello();
     response.send('ok');
   }
+
+  @Get('/publish-simple')
+  async publishHelloSimple(@Res() response: Response) {
+    const message = await this.appService.simplePublishHello();
+    response.send(message);
+  }
 }
